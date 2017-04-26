@@ -39,7 +39,10 @@ class IndeedSearcher(jobSearcher.JobSearcher):
         self.results_count = 0
 
     def collect_jobs(self, html_doc, element_id=None, element_class_name=None):  
-
+        '''
+        Main method for collecting jobs from job results page. Uses BeautifulSoup to strain page.
+        :param: html_doc - unicode string
+        '''
         list_of_jobs = []
 
         job_collection_times = []
@@ -91,6 +94,9 @@ class IndeedSearcher(jobSearcher.JobSearcher):
         return list_of_jobs
 
     def get_results_count(self):
+        '''
+        Find results number listing on page
+        '''
         try:
             self.results_count = int(self.driver.find_element_by_id(self.RESULTS_COUNT_ID).text.split(' ')[-1])
         except (WebDriverException, NoSuchElementException) as wn:
@@ -101,8 +107,10 @@ class IndeedSearcher(jobSearcher.JobSearcher):
             print "Found results count:{}".format(self.results_count)
 
     def wait_for_results_loaded(self):
+        '''
+        Wait until page is loaded using specific class name of text boxes on Indeed web page.
+        '''
         try:
-            # wait until page is loaded using specific class name of text boxes on Indeed page
             WebDriverWait(self.driver, self.DRIVER_IMPLICIT_WAIT_TIME).until(
                ec.presence_of_element_located((By.CLASS_NAME, self.VISIBLE_ELEMENT_CLASS_CHECK))
             )
