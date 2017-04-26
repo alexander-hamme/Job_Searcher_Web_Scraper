@@ -4,11 +4,11 @@ Created on Sat Dec 17 18:54:19 2016
 
 @author: Alexander Hamme
 """
-from bs4 import BeautifulSoup
 from selenium.common.exceptions import WebDriverException, NoSuchElementException, TimeoutException
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
 import jobSearcher
 import job_class
 import urllib2
