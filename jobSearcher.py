@@ -11,96 +11,36 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.common.exceptions import TimeoutException, WebDriverException, NoSuchElementException
 from selenium.webdriver.support import expected_conditions as ec
-
+import job_class
+import codecs
 import time
 import os
 import re
-import codecs
-
-import job_class
-# Comics places - Marvel, DC, ...
-
-# http://nyc.startupjobfair.org/
-
-# http://www.gamedevmap.com/
-
-# http://gamejobhunter.com/blog/local-video-game-companies-new-york-city/
-# http://www.gamedevmap.com/index.php?location=New%20York%20City
-#   ^^^^^^^^^ All of these!!!
-
-# e.g. http://www.cipherprime.com/ <-- cool!!!
-
-# hackNY.org
-# http://www.indeed.com/Best-Places-to-Work/2016-US-Software-and-Technology-Department
-# http://www.indeed.com/Best-Places-to-Work/2016-US-Technology-Industry
-
-# https://jobs.apple.com/us/search?jobFunction=CGINT#&t=0&sb=req_open_dt&so=1&j=CGINT&lo=0*USA&pN=0
-
-#   hackathons - NY Hack
 
 
-webSites = ['www.idealist.org', 'dice.com', 'www.monster.com', 'www.indeed.com', 'https://nic-csm.symplicity.com/students/', 
-            'https://www.icims.com/', 'https://startupjobfair.org/', 'gamejobhunter.com', 
-            'http://gamecenter.nyu.edu/', 'https://www.crunchboard.com/', 
-            
-            'http://iac.com/careers/job-listings', # ***** made up of a ton of companies
-            'http://www.aol-careers.com/', 'http://www.aol-careers.com/careers/internships-fellowships', 'https://www.facebook.com/careers/university/internships/engineering',
-            'http://www.cushmanwakefield.com/', 'http://www.gamesforchange.org/'
-            'http://www.technyc.org/', 'http://www.techstars.com/', 'http://www.clutchtalent.com/jobs/',
-            ]
-
-searchTerms = [
-    'venture capital', 'video game', 'videogame', 'biotechnology', 'computer vision', 'oculus',
-    'deep learning',
-]
-
-companies = ['Etsy', 'Spotify', 'Kespry', 'DARPA', 'Parrot', 'http://www.proxdynamics.com', 'pentagon', 'BAE Systems', 'Harvard University', 'MIT', 'Lockheed Martin',
-'Northrop Grumman', 'Ekso Bionics']
-
-
-nicURL = "https://nic-csm.symplicity.com/students/"
-
-# make this into a generic jobSearcher Parent Class
-# make child classes for each website and write over certain function definitions as needed
-
-""""
-
-
-It MAY NOT FIND A KEYWORD IN THE TEXT IF it is CAPITALIZED IN THE TEXT!!!! 
-
-
-"""
-
-CHROMEDRIVER_PATH = "C:\Chromedriver\chromedriver.exe"
-# need to prompt for this if you make an exe?
-INDEED_URL = 'http://www.indeed.com/advanced_search'
-DEFAULT_SEARCH_TERMS = ['python', 'computer programming', 'java', 'software']  # to be searched in the OR box.
-DEFAULT_SEARCH_LOCATION = "new york, ny"
-SEARCH_RADIUS = 50
-DEFAULT_RELEVANCY_KEYWORDS = [
+class JobSearcher:  
+    
+    """Documentation goes here. a Job collecting program to blah blah"""
+    CHROMEDRIVER_PATH = "C:\Chromedriver\chromedriver.exe"
+    INDEED_URL = 'http://www.indeed.com/advanced_search'
+    DEFAULT_SEARCH_TERMS = ['python', 'computer programming', 'java', 'software']  # to be searched in the OR box.
+    DEFAULT_SEARCH_LOCATION = "new york, ny"
+    SEARCH_RADIUS = 50
+    DEFAULT_RELEVANCY_KEYWORDS = [
                                 'python', 'java', 'music', 'javascript', 'programming', 'computer',
                                 'software', 'videogame', 'biotechnology', 'oculus', 'intern', 'undergrad',
                                 'bionics', 'software', 'Marvel', 'comics', 'DC', 'bioinspire'
                              ]
-DEFAULT_RELEVANCY_PHRASES = [
+    DEFAULT_RELEVANCY_PHRASES = [
                              'computer vision', 'deep learning', 'machine learning',
                              'video game', 'software development', 'cyber security'
                             ]
-# use re.compile for relevancy words / phrases
-DEBUG_MODE = True
-
-
-class JobSearcher:  # rename to JobCollector
-    
-    """Documentation goes here. a Job collecting program to blah blah"""
-
+    DEBUG_MODE = True
     SELECTION_WAIT_TIME = 0.1
     DRIVER_IMPLICIT_WAIT_TIME = 6
     
     def __init__(self):
 
-        #self.session_url = '' # chrome driver session url
-        #self.session_id = ''
         self.driver = None
         self.search_terms = []
         self.search_phrases = []
