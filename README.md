@@ -5,9 +5,9 @@
 
 
 <h6>Technologies used: </h6>
+- Urllib2<br>
 - BeautifulSoup<br>
 - Selenium WebDriver<br>
-- Urllib2<br>
 - ChromeDriver<br><br>
 
 <p><i>Note: The JobSearcher Parent Class can easily be extended to scrape from other job boards such as Monster, Glassdoor, etc.</i><p>
