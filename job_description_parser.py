@@ -33,14 +33,9 @@ class JobDescriptionParser:
 
     def strain_page(self, page):
         """
-        :param page:
+        :param page: BeautifulSoup object
         :return: unicode string
-
-        :type(soup_page) -> BeautifulSoup
         """
-
-        assert isinstance(page, BeautifulSoup)
-        
         # some pages don't have a body element
         if page.body is not None:
             for key in list(page.body.attrs):
