@@ -85,9 +85,9 @@ class IndeedSearcher(jobSearcher.JobSearcher):
 
                     job = job_class.Job()
                     job.assign_values(tuple(job_parts))
-
-
+                    
                     list_of_jobs.append(job)
+                    
         return list_of_jobs
 
     def get_results_count(self):
@@ -186,79 +186,58 @@ class IndeedSearcher(jobSearcher.JobSearcher):
             # May have reached end of search results
             pass
 
-
     def main(self):
 
         job_results = []
-        self.get_information()
-        """
-
-        TODO: make get_information use a dialog window!
-
-        """
+        
+        self.get_information()      # From JobSearcher Parent Class
 
         self.open_new_session(str(self.ACCESS_URL))
 
-        '''
-        for term in self.mainSearchTerms:   # then another one, and change jt to 'part time'
-            self.enterKeyWords(term, 'as_and')
-            self.enterKeyWords(self.mainSearchTerms, 'as_any')
-            self.enterLocation(self.areas[0], 'where')
-            self.chooseDropDowns(('radius','15'), ('limit','50'), ('jt','internship'))
-            time.sleep(1)
-            self.searchButton('fj', 'input_submit')
-            time.sleep(1)
-            jobs += self.collectIndeedJobs()
-        '''
-        #self.enterKeyWords([self.mainSearchTerms], 'as_and')
         self.enter_values(self.search_location, element_id='where')
+        
         self.enter_values(self.search_terms, element_id='as_any')
+        
         if len(self.search_phrases):
             self.enter_values(self.search_phrases, element_id='as_phr')
 
-        """
-        TODO: add jobType parameter
-        """
-        
         self.chooseDropDowns(('radius', '25', 'within 25 miles of'), ('limit', '50', '50'), ('jt', 'all', 'All job types'))
 
-        time.sleep(0.5)  # purely for user viewing
-
         self.search_button(element_id='fj', element_class_name='input_submit')
+        
         self.wait_for_results_loaded()
+        
         self.get_results_count()
+        
         # Check if there are zero search results
         if self.results_count == 0:
-            raise SystemExit("No search results for these specific parameters")
+            raise SystemExit("No search results found for these specific parameters")
 
         html_page = self.driver.page_source
+        
         job_results += self.collect_jobs(html_page, element_class_name='row')
-        # If there are more results on the next page
-        time.sleep(2)
-        """ copy the link to go to the next page instead?"""
 
         if self.RESULTS_PER_PAGE < self.results_count:
-            # time.sleep(1)
-            for i in range(self.results_count//self.RESULTS_PER_PAGE):  # + 1
+            for i in range(self.results_count//self.RESULTS_PER_PAGE):  # Continue to travel through search result pages until reach last page
                 self.visit_next_page("Next »")
                 self.wait_for_results_loaded()
                 html_page = self.driver.page_source
                 job_results += self.collect_jobs(html_page, element_class_name='row')
                 time.sleep(1)
-        # self.collect_descriptions_alt(job_results)
+                
         self.collect_descriptions(job_results)
 
         self.sort_by_relevancy(job_results, self.relevancy_keywords, self.relevancy_phrases)
-        # previous: job_results = self.sort_by_relevancy(jobs_list, self.relevancy_keywords, self.relevancy_phrases)
-
+        
         self.write_to_file(job_results)
 
         print '\nTotal elapsed time of {} session: {}m, {}s'.format(
             self.__class__.__name__, int((time.time()-self.timeSinceBeginning)//60),
             (time.time()-self.timeSinceBeginning+0.5) % 60
         )
+        
         self.close_session()
-        ''' if giveReport: self.fullReport()'''
+
         return job_results
 
 
@@ -266,6 +245,6 @@ def main():
     searcher = IndeedSearcher()
     return searcher.main()
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()
 
