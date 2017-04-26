@@ -13,24 +13,14 @@ class JobDescriptionParser:
     TAGS_TO_INCLUDE = {"p", "span", "body", "table", "th", "tr", "td", "tbody", "b", "i", "em", "small", "br", "strong",
                        "font", "div", "ul", "ol", "dl", "dd", "dt", "li", "b", "em", "h1", "h2", "h3", "h4", "h5", "h6"}
     # set to check membership
-    TAGS_TO_EXCLUDE = {"script", "style", "label", "input", "a", "img", "iframe"}  # set to check membership
+    TAGS_TO_EXCLUDE = {"script", "style", "label", "input", "a", "img", "iframe"}
 
     # list for iteration
-    TEXT_TO_EXCLUDE = ["discrimination", "veteran", "disability", "disabled", "disabilities", "All rights reserved",
-                       "click", ]
+    TEXT_TO_EXCLUDE = ["All rights reserved", "click", "email list", "legal"]
 
     MINIMUM_TEXT_LENGTH = 50
 
     ATTRIBUTES_TO_INCLUDE = ["style", "size", "face", "color"]
-
-    """
-    ||||||||||
-
-                TODO:   decide on a font (and other characteristics(?)) to be used throughout,
-
-                        change the font of incoming elements in the tag.attrs section
-    ||||||||||
-    """
 
     def __init__(self, text):
         """
@@ -42,24 +32,19 @@ class JobDescriptionParser:
             self.page = text
 
     def strain_page(self, page):
-
         """
         :param page:
         :return: unicode string
 
         :type(soup_page) -> BeautifulSoup
-
-        TODO: Finding the PAY is not working!
         """
 
         assert isinstance(page, BeautifulSoup)
-
-        # some pages don't have a body?
-
+        
+        # some pages don't have a body element
         if page.body is not None:
-            # print "body tag found"
             for key in list(page.body.attrs):
-                # if key not in self.ATTRIBUTES_TO_INCLUDE:
+                # if key not in self.ATTRIBUTES_TO_INCLUDE:         # Optional, if you wish to maintain font and colors from original page
                 del page.body.attrs[key]
             soup_page = BeautifulSoup(str(page.body), "html.parser")
         else:
@@ -68,11 +53,7 @@ class JobDescriptionParser:
             else:
                 soup_page = page
 
-        # for key in list(soup_page.body.attrs):
-
-        # for child in list(soup_page.body.descendants):
         for child in list(soup_page.descendants):
-
             if child.name in ("None", None):
                 continue
 
@@ -98,8 +79,7 @@ class JobDescriptionParser:
                     child.decompose()
 
             elif not len(list(child.stripped_strings)):
-                # This comes third because tags like <script> and <input> contain text
-                # What's the difference between this and get_text()?
+                # This comes third because tags such as <script> and <input> can contain characters
                 child.decompose()
 
             else:
@@ -111,11 +91,5 @@ class JobDescriptionParser:
                 if len(child.get_text(strip=True)) < self.MINIMUM_TEXT_LENGTH:
                     child.decompose()
 
-        # return "".join(line.strip() for line in str(soup_page.body.unwrap()).split("\n"))
-        '''
-        body_text = soup_page.body
-        assert isinstance(body_text, Tag)
-        body_text.unwrap()
-        '''
         # strip whitespace and extra lines
         return "".join(line.strip() for line in unicode(soup_page).split("\n"))
