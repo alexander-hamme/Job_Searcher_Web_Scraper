@@ -1,14 +1,11 @@
+from bs4 import NavigableString
+from bs4 import BeautifulSoup
 import job_description_parser as jdp
-from bs4 import BeautifulSoup, NavigableString
-
 
 class Job:
-    # Job class to store information for jobs
-    TEXT_TO_EXCLUDE = {
-    "discrimination", "veteran", "disability", "disabled", "disabilities", "All rights reserved",
-    "click",
-    }
-
+    '''
+    Job class to store information for many individual jobs.
+    '''
     def __init__(self):
         self.title = u"Not found"
         self.company = u"Not found"
@@ -26,6 +23,9 @@ class Job:
             raise ValueError("Job info tuple must contain 5 values")
 
     def collect_job_description(self, page_source):
+        '''
+        Use JobDescriptionParser class to strain text and job information from page
+        '''
         parser = jdp.JobDescriptionParser(page_source)
         self.full_text = parser.strain_page(parser.page)
 
