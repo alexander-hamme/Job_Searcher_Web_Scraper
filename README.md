@@ -4,9 +4,10 @@
 <br>Program finally sorts jobs by relevancy score, using relevancy keywords, and writes final results to HTML file. </p>
 
 
-<h6>Modules used: </h6>
+<h6>Technologies used: </h6>
 - BeautifulSoup<br>
 - Selenium WebDriver<br>
-- Urllib2<br><br>
+- Urllib2<br>
+- ChromeDriver<br><br>
 
 <p><i>Note: The JobSearcher Parent Class can easily be extended to scrape from other job boards such as Monster, Glassdoor, etc.</i><p>
